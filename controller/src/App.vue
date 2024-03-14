@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import BtnFullScreen from './components/BtnFullScreen.vue'
 import ControlsGroup from './components/ControlsGroup.vue'
+import GamepadControls from './components/GamepadControls.vue'
 import { onMounted, ref } from 'vue'
 
 let ws: WebSocket | null = null
 
 const wrapper = ref<null | HTMLDivElement>(null)
-const message = ref('')
+const message = ref('asdsd')
 
-const selectDirection = (value: string) => {
+const setDirection = (value: string) => {
   if (!ws) {
     return
   }
+  message.value = value
 
   ws.send(value)
 }
@@ -44,7 +46,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <div ref="wrapper"><ControlsGroup @select-direction="selectDirection" /></div>
+  <GamepadControls @set-direction="setDirection" />
+  <ControlsGroup @set-direction="setDirection" />
   <BtnFullScreen class="btn-fullscreen" @set-fullscreen="setFullscreen" />
 </template>
 
@@ -55,4 +58,3 @@ onMounted(() => {
   bottom: 1em;
 }
 </style>
-./components/ControlsGroup.vue

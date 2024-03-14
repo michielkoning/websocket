@@ -1,14 +1,14 @@
 <script lang="ts" setup>
-defineEmits(['selectDirection'])
+defineEmits(['setDirection'])
 </script>
 
 <template>
   <div class="wrapper">
     <div class="item">
-      <button @click="$emit('selectDirection', 'left')">left</button>
+      <button @click="$emit('setDirection', 'left')">left</button>
     </div>
     <div class="item">
-      <button @click="$emit('selectDirection', 'right')">right</button>
+      <button @click="$emit('setDirection', 'right')">right</button>
     </div>
   </div>
 </template>
