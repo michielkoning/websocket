@@ -1,36 +1,53 @@
 <script setup lang="ts">
+import BtnFullScreen from './components/BtnFullScreen.vue'
+import ImageGrid from './components/ImageGrid.vue'
+import { onMounted, ref } from 'vue'
+
 let ws: WebSocket | null = null
 
-onMounted(() => {
-  ws = new WebSocket('ws://localhost:8080')
+const wrapper = ref<null | HTMLDivElement>(null)
+const message = ref('')
 
-  ws.onerror = function () {
+const setFullscreen = () => {
+  if (!wrapper.value) {
+    return
+  }
+
+  wrapper.value.requestFullscreen()
+}
+
+onMounted(() => {
+  ws = new WebSocket(import.meta.env.VITE_WEBSOCKET_SERVER)
+
+  ws.onerror = () => {
     console.log('WebSocket error')
   }
-  ws.onopen = function () {
+  ws.onmessage = (event) => {
+    console.log(event)
+    message.value = event.data
+  }
+  ws.onopen = () => {
     console.log('WebSocket connection established')
   }
-  ws.onclose = function () {
+  ws.onclose = () => {
     console.log('WebSocket connection closed')
     ws = null
   }
 })
-
-import { onMounted, ref } from 'vue'
-
-const input = ref('')
-const send = () => {
-  if (!ws) {
-    return
-  }
-  ws.send(input.value)
-}
 </script>
 
 <template>
-  <div>
-    {{ input }}
-    <input type="text" v-model="input" />
-    <button @click="send">send</button>
+  <div ref="wrapper">
+    message= {{ message }}
+    <!-- <ImageGrid :message="message" /> -->
   </div>
+  <BtnFullScreen class="btn-fullscreen" @set-fullscreen="setFullscreen" />
 </template>
+
+<style scoped>
+.btn-fullscreen {
+  position: fixed;
+  right: 1em;
+  bottom: 1em;
+}
+</style>

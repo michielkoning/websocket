@@ -1,20 +1,19 @@
 <script setup lang="ts">
 import BtnFullScreen from './components/BtnFullScreen.vue'
-import ImageGrid from './components/ImageGrid.vue'
+import ControlsGroup from './components/ControlsGroup.vue'
 import { onMounted, ref } from 'vue'
 
 let ws: WebSocket | null = null
 
 const wrapper = ref<null | HTMLDivElement>(null)
 const message = ref('')
-const input = ref('')
 
-const send = () => {
+const selectDirection = (value: string) => {
   if (!ws) {
     return
   }
 
-  ws.send(input.value)
+  ws.send(value)
 }
 
 const setFullscreen = () => {
@@ -28,16 +27,16 @@ const setFullscreen = () => {
 onMounted(() => {
   ws = new WebSocket(import.meta.env.VITE_WEBSOCKET_SERVER)
 
-  ws.onerror = function () {
+  ws.onerror = () => {
     console.log('WebSocket error')
   }
-  ws.onmessage = function (event) {
+  ws.onmessage = (event) => {
     message.value = event.data
   }
-  ws.onopen = function () {
+  ws.onopen = () => {
     console.log('WebSocket connection established')
   }
-  ws.onclose = function () {
+  ws.onclose = () => {
     console.log('WebSocket connection closed')
     ws = null
   }
@@ -45,9 +44,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div ref="wrapper">
-    <ImageGrid />
-  </div>
+  <div ref="wrapper"><ControlsGroup @select-direction="selectDirection" /></div>
   <BtnFullScreen class="btn-fullscreen" @set-fullscreen="setFullscreen" />
 </template>
 
@@ -58,3 +55,4 @@ onMounted(() => {
   bottom: 1em;
 }
 </style>
+./components/ControlsGroup.vue

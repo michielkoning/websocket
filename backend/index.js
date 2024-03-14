@@ -1,4 +1,4 @@
-import { WebSocketServer } from "ws";
+import WebSocket, { WebSocketServer } from "ws";
 
 const wss = new WebSocketServer({ port: 8080 });
 
@@ -8,7 +8,15 @@ wss.on("connection", function connection(ws) {
 
   ws.on("message", function message(data) {
     console.log("received: %s", data);
-  });
+    ws.send("tes22");
 
-  ws.send("something");
+    ws.on("message", function message(data) {
+      console.log(data);
+      wss.clients.forEach(function each(client) {
+        if (client !== ws && client.readyState === WebSocket.OPEN) {
+          client.send(data.toString());
+        }
+      });
+    });
+  });
 });
