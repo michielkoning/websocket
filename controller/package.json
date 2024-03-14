@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "hoya-controller",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -13,7 +13,8 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "vue": "^3.4.21"
+    "vue": "^3.4.21",
+    "ws": "^8.16.0"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.7.2",
