@@ -3,11 +3,16 @@ import BtnFullScreen from './components/BtnFullScreen.vue'
 import ControlsGroup from './components/ControlsGroup.vue'
 import GamepadControls from './components/GamepadControls.vue'
 import { onMounted, ref } from 'vue'
+import SpeechController from './components/SpeechController.vue';
 
 let ws: WebSocket | null = null
 
 const wrapper = ref<null | HTMLDivElement>(null)
 const message = ref('asdsd')
+
+const setCommand = (value: string) => {
+  setDirection(value)
+}
 
 const setDirection = (value: string) => {
   if (!ws) {
@@ -47,6 +52,7 @@ onMounted(() => {
 
 <template>
   <GamepadControls @set-direction="setDirection" />
+  <SpeechController @set-command="setCommand" />
   <ControlsGroup @set-direction="setDirection" />
   <BtnFullScreen class="btn-fullscreen" @set-fullscreen="setFullscreen" />
 </template>

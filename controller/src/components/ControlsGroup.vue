@@ -5,10 +5,10 @@ defineEmits(['setDirection'])
 <template>
   <div class="wrapper">
     <div class="item">
-      <button @click="$emit('setDirection', 'left')">left</button>
+      <button @click="$emit('setDirection', 'left')">Links</button>
     </div>
     <div class="item">
-      <button @click="$emit('setDirection', 'right')">right</button>
+      <button @click="$emit('setDirection', 'right')">Rechts</button>
     </div>
   </div>
 </template>
