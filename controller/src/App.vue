@@ -13,20 +13,20 @@ const wrapper = ref<null | HTMLDivElement>(null)
 const direction = ref('')
 const symbolSize = ref(1)
 const symbolType = ref('left')
+const isFullscreen = ref(false)
 
 const setCommand = (value: string) => {
   setDirection(value)
 }
 
-watch(direction, () => {
-  symbolType.value = direction.value
-})
-
 const setDirection = (value: string) => {
+  direction.value = value
+}
+
+const submit = () => {
   if (!ws) {
     return
   }
-  direction.value = value
 
   ws.send(direction.value)
 }
@@ -36,7 +36,13 @@ const setFullscreen = () => {
     return
   }
 
-  wrapper.value.requestFullscreen()
+  if (!isFullscreen.value) {
+    wrapper.value.requestFullscreen()
+  } else {
+    document.exitFullscreen()
+  }
+
+  isFullscreen.value = !isFullscreen.value
 }
 
 onMounted(() => {
@@ -59,12 +65,12 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="wrapper" :style="`--size: ${symbolSize}`">
-    <GamepadControls @set-direction="setDirection" />
+  <div ref="wrapper" class="wrapper" :style="`--size: ${symbolSize}`">
+    <GamepadControls @set-direction="setDirection" @submit="setDirection" />
     <div class="buttons">
-      <SpeechController class="btn-speech-recognition" @set-command="setCommand" />
       <BtnFullScreen class="btn-fullscreen" @set-fullscreen="setFullscreen" />
-      <BtnNext class="btn-next" />
+      <SpeechController class="btn-speech-recognition" @set-command="setCommand" />
+      <BtnNext class="btn-next" @submit="submit" />
     </div>
 
     <div class="canvas">
