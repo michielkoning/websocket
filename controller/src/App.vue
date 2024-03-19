@@ -2,7 +2,7 @@
 import BtnFullScreen from './components/BtnFullScreen.vue'
 import ControlsGroup from './components/ControlsGroup.vue'
 import GamepadControls from './components/GamepadControls.vue'
-import SpeechController from './components/SpeechController.vue';
+import SpeechController from './components/SpeechController.vue'
 import AppSymbol from './components/AppSymbol.vue'
 import { onMounted, ref, watch } from 'vue'
 
@@ -75,7 +75,6 @@ onMounted(() => {
 
 <style scoped>
 .wrapper {
-  border: 2px solid red;
   block-size: 100svh;
   display: grid;
   grid-template-columns: 1fr;
