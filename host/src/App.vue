@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import BtnFullScreen from './components/BtnFullScreen.vue'
 import ImageGrid from './components/ImageGrid.vue'
+import QrCode from './components/QrCode.vue'
 import { onMounted, ref } from 'vue'
 
 let ws: WebSocket | null = null
@@ -39,6 +40,7 @@ onMounted(() => {
 <template>
   <div ref="wrapper">
     message= {{ message }}
+    <QrCode />
     <!-- <ImageGrid :message="message" /> -->
   </div>
   <BtnFullScreen class="btn-fullscreen" @set-fullscreen="setFullscreen" />
