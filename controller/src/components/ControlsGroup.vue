@@ -51,7 +51,8 @@ defineEmits(['setDirection'])
 .controls-group {
   position: relative;
   aspect-ratio: 1 / 1;
-  height: 40vh;
+  height: 35vh;
+  margin-bottom: 5vh;
   display: grid;
   grid-template-areas:
     '. n .'
