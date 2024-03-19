@@ -18,11 +18,18 @@ defineEmits(['setFullscreen'])
   cursor: pointer;
   background: transparent;
   border: 0;
+  color: #fff;
+  opacity: 0.5;
+  transition: opacity 0.2s ease-out;
+
+  &:hover {
+    opacity: 1;
+  }
 }
 
 svg {
   aspect-ratio: 1 / 1;
-  block-size: 2rem;
+  block-size: 3rem;
   fill: currentColor;
 }
 </style>

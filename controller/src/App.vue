@@ -3,6 +3,7 @@ import BtnFullScreen from './components/BtnFullScreen.vue'
 import ControlsGroup from './components/ControlsGroup.vue'
 import GamepadControls from './components/GamepadControls.vue'
 import SpeechController from './components/SpeechController.vue'
+import BtnNext from './components/BtnNext.vue'
 import AppSymbol from './components/AppSymbol.vue'
 import { onMounted, ref, watch } from 'vue'
 
@@ -60,8 +61,11 @@ onMounted(() => {
 <template>
   <div class="wrapper" :style="`--size: ${symbolSize}`">
     <GamepadControls @set-direction="setDirection" />
-    <SpeechController class="btn-speech-recognition" @set-command="setCommand" />
-    <BtnFullScreen class="btn-fullscreen" @set-fullscreen="setFullscreen" />
+    <div class="buttons">
+      <SpeechController class="btn-speech-recognition" @set-command="setCommand" />
+      <BtnFullScreen class="btn-fullscreen" @set-fullscreen="setFullscreen" />
+      <BtnNext class="btn-next" />
+    </div>
 
     <div class="canvas">
       <AppSymbol class="symbol" :type="symbolType" />
@@ -95,18 +99,15 @@ onMounted(() => {
   justify-content: center;
 }
 
-.btn-fullscreen {
+.buttons {
   position: fixed;
-  right: 1rem;
-  bottom: 1rem;
-  color: white;
+  display: flex;
+  gap: 1rem;
+  inset: auto 1rem 1rem;
 }
 
-.btn-speech-recognition {
-  position: fixed;
-  right: 3.75rem;
-  bottom: 1rem;
-  color: white;
+.btn-next {
+  margin-left: auto;
 }
 
 .symbol {
