@@ -45,6 +45,7 @@ const startRecognition = () => {
 }
 
 onMounted(() => {
+  // @ts-ignore
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition || null
   if (!SpeechRecognition) return
 

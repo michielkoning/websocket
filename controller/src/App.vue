@@ -5,14 +5,17 @@ import GamepadControls from './components/GamepadControls.vue'
 import SpeechController from './components/SpeechController.vue'
 import BtnNext from './components/BtnNext.vue'
 import AppSymbol from './components/AppSymbol.vue'
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref } from 'vue'
 
 let ws: WebSocket | null = null
+
+const page = ref(1)
 
 const wrapper = ref<null | HTMLDivElement>(null)
 const direction = ref('')
 const symbolSize = ref(1)
 const symbolType = ref('left')
+const symbolTypes = ['left', 'top', 'right', 'down']
 const isFullscreen = ref(false)
 
 const setCommand = (value: string) => {
@@ -28,7 +31,13 @@ const submit = () => {
     return
   }
 
-  ws.send(direction.value)
+  if (!direction.value) {
+    return
+  }
+
+  ws.send(`${page.value + 1}`)
+
+  direction.value = ''
 }
 
 const setFullscreen = () => {
@@ -45,6 +54,11 @@ const setFullscreen = () => {
   isFullscreen.value = !isFullscreen.value
 }
 
+const reset = () => {
+  const randomIndex = Math.floor(Math.random() * 4)
+  symbolType.value = symbolTypes[randomIndex]
+}
+
 onMounted(() => {
   ws = new WebSocket(import.meta.env.VITE_WEBSOCKET_SERVER)
 
@@ -52,7 +66,7 @@ onMounted(() => {
     console.log('WebSocket error')
   }
   ws.onmessage = (event) => {
-    direction.value = event.data
+    page.value = Number(event.data)
   }
   ws.onopen = () => {
     console.log('WebSocket connection established')
@@ -74,7 +88,14 @@ onMounted(() => {
     </div>
 
     <div class="canvas">
-      <AppSymbol class="symbol" :type="symbolType" />
+      <Transition @after-leave="reset">
+        <AppSymbol
+          v-if="page % 2 === 0"
+          class="symbol"
+          :type="symbolType"
+          :style="{ scale: `calc(1 - (${page / 10}))` }"
+        />
+      </Transition>
     </div>
 
     <div class="controls">
@@ -117,6 +138,17 @@ onMounted(() => {
 }
 
 .symbol {
-  block-size: calc(var(--size) * 1svw + 5svw);
+  block-size: 5em;
+}
+
+/* we will explain what these classes do next! */
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.1s ease-out;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
 </style>
