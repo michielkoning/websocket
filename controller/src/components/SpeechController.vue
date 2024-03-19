@@ -1,122 +1,69 @@
 <script lang="ts" setup>
-// import { onMounted, ref } from 'vue'
+// https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognition/SpeechRecognition
 
-// const output = ref('')
+import { onMounted, ref } from 'vue'
 
-// const colors = [
-//   'aqua',
-//   'azure',
-//   'beige',
-//   'bisque',
-//   'black',
-//   'blue',
-//   'brown',
-//   'chocolate',
-//   'coral',
-//   'crimson',
-//   'cyan',
-//   'fuchsia',
-//   'ghostwhite',
-//   'gold',
-//   'goldenrod',
-//   'gray',
-//   'green',
-//   'indigo',
-//   'ivory',
-//   'khaki',
-//   'lavender',
-//   'lime',
-//   'linen',
-//   'magenta',
-//   'maroon',
-//   'moccasin',
-//   'navy',
-//   'olive',
-//   'orange',
-//   'orchid',
-//   'peru',
-//   'pink',
-//   'plum',
-//   'purple',
-//   'red',
-//   'salmon',
-//   'sienna',
-//   'silver',
-//   'snow',
-//   'tan',
-//   'teal',
-//   'thistle',
-//   'tomato',
-//   'turquoise',
-//   'violet',
-//   'white',
-//   'yellow'
-// ]
+const emit = defineEmits(['setCommand'])
 
-// let recognition = null
+const isListening = ref(false)
+const lang = 'nl-NL'
+const phrases = ['links', 'rechts']
+const commands = ['left', 'right']
 
-// const startSpeech = () => {
-//   if (!recognition) {
-//     return
-//   }
-//   recognition.start()
-//   console.log('Ready to receive a color command.')
-// }
+let recognition: any = null
 
-// onMounted(() => {
-//   // const SpeechRecognition = SpeechRecognition || webkitSpeechRecognition
-//   // const SpeechGrammarList = SpeechGrammarList || window.webkitSpeechGrammarList
-//   // const SpeechRecognitionEvent = SpeechRecognitionEvent || webkitSpeechRecognitionEvent
-//   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
-//   const SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList
-//   const SpeechRecognitionEvent =
-//     window.SpeechRecognitionEvent || window.webkitSpeechRecognitionEvent
+const toggleRecognition = () => {
+  if (isListening.value === true) {
+    stopRecognition()
+    isListening.value = false
+  } else {
+    startRecognition()
+    isListening.value = true
+  }
+}
 
-//   recognition = new SpeechRecognition()
+const stopRecognition = () => {
+  if (recognition) recognition.stop()
+}
 
-//   if (SpeechGrammarList) {
-//     // SpeechGrammarList is not currently available in Safari, and does not have any effect in any other browser.
-//     // This code is provided as a demonstration of possible capability. You may choose not to use it.
-//     var speechRecognitionList = new SpeechGrammarList()
-//     var grammar = '#JSGF V1.0; grammar colors; public <color> = ' + colors.join(' | ') + ' ;'
-//     speechRecognitionList.addFromString(grammar, 1)
-//     recognition.grammars = speechRecognitionList
-//   }
-//   recognition.continuous = false
-//   recognition.lang = 'nl-NL'
-//   recognition.interimResults = false
-//   recognition.maxAlternatives = 1
+const startRecognition = () => {
+  if (recognition) {
+    recognition.start()
+    console.log('Speech recognition started')
+  }
+}
 
-//   recognition.onresult = function (event) {
-//     // The SpeechRecognitionEvent results property returns a SpeechRecognitionResultList object
-//     // The SpeechRecognitionResultList object contains SpeechRecognitionResult objects.
-//     // It has a getter so it can be accessed like an array
-//     // The first [0] returns the SpeechRecognitionResult at the last position.
-//     // Each SpeechRecognitionResult object contains SpeechRecognitionAlternative objects that contain individual results.
-//     // These also have getters so they can be accessed like arrays.
-//     // The second [0] returns the SpeechRecognitionAlternative at position 0.
-//     // We then return the transcript property of the SpeechRecognitionAlternative object
-//     const color = event.results[0][0].transcript
-//     output.value = 'Result received: ' + color + '.'
-//   }
+onMounted(() => {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition || null
+  if (!SpeechRecognition) return
 
-//   recognition.onspeechend = function () {
-//     recognition.stop()
-//   }
+  recognition = new SpeechRecognition()
 
-//   recognition.onnomatch = function (event) {
-//     output.value = "I didn't recognise that color."
-//   }
+  recognition.continuous = true
+  recognition.lang = lang
+  recognition.interimResults = false
+  recognition.maxAlternatives = 1
 
-//   recognition.onerror = function (event) {
-//     output.value = 'Error occurred in recognition: ' + event.error
-//   }
-// })
+  recognition.onresult = (event: any) => {
+    const result = event.results[event.results.length - 1][0].transcript
+    phrases.forEach((phrase, index) => {
+      if (result.includes(phrase)) emit('setCommand', commands[index])
+    })
+  }
+
+  recognition.onspeechend = () => {
+    console.log('Speech recognition ended')
+    isListening.value = false
+  }
+
+  recognition.onerror = (event: any) => {
+    console.error(event.error)
+  }
+})
 </script>
 
 <template>
   <div>
-    <!-- <button @click="startSpeech">startSpeech</button>
-    {{ output }} -->
+    <button @click="toggleRecognition">{{ isListening ? 'Stop' : 'Start' }} listening</button>
   </div>
 </template>
