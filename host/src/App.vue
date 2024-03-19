@@ -70,7 +70,7 @@ onMounted(() => {
 }
 
 .symbol {
-  block-size: calc(var(--size) * 1svw + 5svw);
+  block-size: 10em;
 }
 
 .btn-fullscreen {
