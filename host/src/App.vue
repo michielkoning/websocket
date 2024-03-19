@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import BtnFullScreen from './components/BtnFullScreen.vue'
 import AppSymbol from './components/AppSymbol.vue'
-import ImageGrid from './components/ImageGrid.vue'
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref } from 'vue'
 
 let ws: WebSocket | null = null
 
 const wrapper = ref<null | HTMLDivElement>(null)
-const direction = ref('')
-const symbolTypes = ['left', 'top', 'right', 'down']
+const symbolTypes = ['left', 'up', 'right', 'down']
 const symbolSize = ref(1)
 const symbolType = ref('left')
 const page = ref(1)
@@ -48,17 +46,13 @@ const reset = () => {
 </script>
 
 <template>
-  <div ref="wrapper" class="wrapper" :style="`--size: ${symbolSize}`">
+  <div ref="wrapper" class="wrapper">
     <BtnFullScreen class="btn-fullscreen" @set-fullscreen="setFullscreen" />
 
     <div class="canvas">
       <Transition @after-leave="reset">
-        <AppSymbol
-          v-if="page % 2 === 1"
-          class="symbol"
-          :type="symbolType"
-          :style="{ scale: `calc(1 - (${page / 10}))` }"
-        />
+        <AppSymbol v-if="page % 2 === 1" class="symbol" :type="symbolType"
+          :style="{ scale: `calc(1 - (${page / 10}))` }" />
       </Transition>
     </div>
   </div>

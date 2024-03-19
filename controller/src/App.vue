@@ -13,9 +13,8 @@ const page = ref(1)
 
 const wrapper = ref<null | HTMLDivElement>(null)
 const direction = ref('')
-const symbolSize = ref(1)
 const symbolType = ref('left')
-const symbolTypes = ['left', 'top', 'right', 'down']
+const symbolTypes = ['left', 'up', 'right', 'down']
 const isFullscreen = ref(false)
 
 const setCommand = (value: string) => {
@@ -35,7 +34,7 @@ const submit = () => {
     return
   }
 
-  ws.send(`${page.value + 1}`)
+  ws.send(`${page.value += 1}`)
 
   direction.value = ''
 }
@@ -79,7 +78,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div ref="wrapper" class="wrapper" :style="`--size: ${symbolSize}`">
+  <div ref="wrapper" class="wrapper">
     <GamepadControls @set-direction="setDirection" @submit="setDirection" />
     <div class="buttons">
       <BtnFullScreen class="btn-fullscreen" @set-fullscreen="setFullscreen" />
@@ -89,12 +88,8 @@ onMounted(() => {
 
     <div class="canvas">
       <Transition @after-leave="reset">
-        <AppSymbol
-          v-if="page % 2 === 0"
-          class="symbol"
-          :type="symbolType"
-          :style="{ scale: `calc(1 - (${page / 10}))` }"
-        />
+        <AppSymbol v-if="page % 2 === 0" class="symbol" :type="symbolType"
+          :style="{ scale: `calc(1 - (${page / 10}))` }" />
       </Transition>
     </div>
 
