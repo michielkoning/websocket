@@ -35,7 +35,7 @@ const submit = () => {
     return
   }
 
-  ws.send(direction.value)
+  ws.send(`${page.value + 1}`)
 
   direction.value = ''
 }
@@ -66,7 +66,7 @@ onMounted(() => {
     console.log('WebSocket error')
   }
   ws.onmessage = (event) => {
-    page.value = page.value + 1
+    page.value = Number(event.data)
   }
   ws.onopen = () => {
     console.log('WebSocket connection established')

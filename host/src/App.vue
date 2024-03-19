@@ -8,8 +8,10 @@ let ws: WebSocket | null = null
 
 const wrapper = ref<null | HTMLDivElement>(null)
 const direction = ref('')
+const symbolTypes = ['left', 'top', 'right', 'down']
 const symbolSize = ref(1)
 const symbolType = ref('left')
+const page = ref(1)
 
 const setFullscreen = () => {
   if (!wrapper.value) {
@@ -19,11 +21,6 @@ const setFullscreen = () => {
   wrapper.value.requestFullscreen()
 }
 
-watch(direction, () => {
-  symbolType.value = direction.value
-  console.log(symbolType.value)
-})
-
 onMounted(() => {
   ws = new WebSocket(import.meta.env.VITE_WEBSOCKET_SERVER)
 
@@ -31,9 +28,10 @@ onMounted(() => {
     console.log('WebSocket error')
   }
   ws.onmessage = (event) => {
-    console.log(event)
-    direction.value = event.data
+    console.log(event.data.value)
+    page.value = Number(event.data)
   }
+
   ws.onopen = () => {
     console.log('WebSocket connection established')
   }
@@ -42,6 +40,11 @@ onMounted(() => {
     ws = null
   }
 })
+
+const reset = () => {
+  const randomIndex = Math.floor(Math.random() * 4)
+  symbolType.value = symbolTypes[randomIndex]
+}
 </script>
 
 <template>
@@ -49,7 +52,14 @@ onMounted(() => {
     <BtnFullScreen class="btn-fullscreen" @set-fullscreen="setFullscreen" />
 
     <div class="canvas">
-      <AppSymbol class="symbol" :type="symbolType" />
+      <Transition @after-leave="reset">
+        <AppSymbol
+          v-if="page % 2 === 1"
+          class="symbol"
+          :type="symbolType"
+          :style="{ scale: `calc(1 - (${page / 10}))` }"
+        />
+      </Transition>
     </div>
   </div>
 </template>
@@ -77,5 +87,16 @@ onMounted(() => {
   position: fixed;
   right: 1rem;
   bottom: 1rem;
+}
+
+/* we will explain what these classes do next! */
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.1s ease-out;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
 </style>
